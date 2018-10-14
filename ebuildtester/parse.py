@@ -65,6 +65,12 @@ def parse_commandline(args):
         default=[],
         action="append")
     parser.add_argument(
+        "--mask",
+        metavar="ATOM",
+        help="Mask atom (can be used multiple times)",
+        default=[],
+        action="append")
+    parser.add_argument(
         "--unstable",
         help="Globally 'unstable' system, i.e. ~amd64",
         action="store_true")

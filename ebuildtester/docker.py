@@ -27,6 +27,7 @@ class Docker:
         self._enable_overlays(map(os.path.basename, overlay_dirs))
         self._enable_test()
         self._unmask_atom()
+        self._mask()
         self._unmask()
         self._update()
         self._install_basics()
@@ -241,12 +242,12 @@ class Docker:
 
         if options.options.atom is not None:
             options.log.info("unmasking %s" % options.options.atom)
+            self.execute("mkdir -p /etc/portage/package.accept_keywords")
             for a in options.options.atom:
                 if options.options.live_ebuild:
                     unmask_keyword = "**"
                 else:
                     unmask_keyword = "~amd64"
-                self.execute("mkdir -p /etc/portage/package.accept_keywords")
                 self.execute(
                     "echo \"" + str(a) + "\" " + unmask_keyword + " >> " +
                     "/etc/portage/package.accept_keywords/testbuild")
@@ -258,13 +259,22 @@ class Docker:
         else:
             options.log.info("no atoms to unmask")
 
+    def _mask(self):
+        """Mask one or more specified atoms"""
+        options.log.info("masking atoms")
+        if options.options.mask is not None:
+            for a in options.options.mask:
+                options.log.info("  masking %s" % a)
+                self.execute("echo \"%s\" >> "
+                             "/etc/portage/package.mask" % a)
+
     def _unmask(self):
         """Unmask other atoms."""
 
         options.log.info("unmasking additional atoms")
+        self.execute("mkdir -p /etc/portage/package.accept_keywords")
         for a in options.options.unmask:
             options.log.info("  unmasking %s" % a)
-            self.execute("mkdir -p /etc/portage/package.accept_keywords")
             self.execute(
                 "echo \"%s\" ~amd64 >> "
                 "/etc/portage/package.accept_keywords/testbuild" % a)

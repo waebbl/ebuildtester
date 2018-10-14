@@ -57,6 +57,11 @@ class TestParse(unittest.TestCase):
             self.args + ["--unmask", "ATOM"])
         self.assertTrue("ATOM" in options.unmask)
 
+    def test_mask(self):
+        options = ebuildtester.parse.parse_commandline(
+            self.args + ["--mask", "ATOM"])
+        self.assertTrue("ATOM" in options.mask)
+
     def test_gcc_version(self):
         options = ebuildtester.parse.parse_commandline(
             self.args + ["--gcc-version", "VER"])
